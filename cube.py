@@ -38,7 +38,7 @@ def F(c):
           c[19], c[17], c[2], c[3], c[8], c[10], c[21], c[20]
     return c
 
-def B(c):
+def F_(c):
     c = c[:]
     c[6], c[4], c[5], c[7] = c[4], c[5], c[7], c[6]
     c[19], c[17], c[2], c[3], c[8], c[10], c[21], c[20] = \
@@ -52,7 +52,7 @@ def U(c):
           c[8], c[9], c[12], c[13], c[16], c[17], c[4], c[5]
     return c
 
-def D(c):
+def U_(c):
     c = c[:]
     c[2], c[0], c[1], c[3] = c[0], c[1], c[3], c[2]
     c[8], c[9], c[12], c[13], c[16], c[17], c[4], c[5] = \
@@ -66,7 +66,7 @@ def R(c):
           c[7], c[5], c[3], c[1], c[12], c[14], c[23], c[21]
     return c
 
-def L(c):
+def R_(c):
     c = c[:]
     c[10], c[8], c[9], c[11] = c[8], c[9], c[11], c[10]
     c[7], c[5], c[3], c[1], c[12], c[14], c[23], c[21] = \
@@ -75,11 +75,11 @@ def L(c):
 
 cube_str = "".join(init_cube)
 path = [{cube_str}]
-op= {cube_str: ""}
+op= {cube_str: []}
 
 std_cube_str = "".join(std_cube)
 reverse_path = [{std_cube_str}]
-reverse_op= {std_cube_str: ""}
+reverse_op= {std_cube_str: []}
 
 found = False
 
@@ -88,19 +88,21 @@ start = time()
 while 1:
     path.append(set())
     for c in path[-2]:
-        for o in F, B, U, D, L, R:
+        for o in F, F_, U, U_, R, R_:
             next_cube = o(list(c))
             next_cube_str = "".join(next_cube)
             if next_cube_str not in op:
                 path[-1].add(next_cube_str)
-                op[next_cube_str] = op[c] + str(o)[10]
+                op[next_cube_str] = op[c] + [{F: 'F', F_: 'F_',
+                                              U: 'U', U_: 'U_',
+                                              R: 'R', R_: 'R_'}[o]]
             if next_cube_str in reverse_path[-1]:
-                t = list(reverse_op[next_cube_str])[::-1]
+                t = reverse_op[next_cube_str][::-1]
                 for i in range(len(t)):
-                    t[i] = {'F': 'B', 'B': 'F',
-                            'U': 'D', 'D': 'U',
-                            'L': 'R', 'R': 'L'}[t[i]]
-                print(list(op[next_cube_str]) + t)
+                    t[i] = {'F': 'F_', 'F_': 'F',
+                            'U': 'U_', 'U_': 'U',
+                            'R': 'R_', 'R_': 'R'}[t[i]]
+                print(op[next_cube_str] + t)
                 print(len(path) + len(reverse_path) - 2)
                 found = True
                 break
@@ -111,19 +113,22 @@ while 1:
 
     reverse_path.append(set())
     for c in reverse_path[-2]:
-        for o in F, B, U, D, L, R:
+        for o in F, F_, U, U_, R, R_:
             next_cube = o(list(c))
             next_cube_str = "".join(next_cube)
             if next_cube_str not in reverse_op:
                 reverse_path[-1].add(next_cube_str)
-                reverse_op[next_cube_str] = reverse_op[c] + str(o)[10]
+                reverse_op[next_cube_str] = reverse_op[c] + \
+                                            [{F: 'F', F_: 'F_',
+                                              U: 'U', U_: 'U_',
+                                              R: 'R', R_: 'R_'}[o]]
             if next_cube_str in path[-1]:
-                t = list(reverse_op[next_cube_str])[::-1]
+                t = reverse_op[next_cube_str][::-1]
                 for i in range(len(t)):
-                    t[i] = {'F': 'B', 'B': 'F',
-                            'U': 'D', 'D': 'U',
-                            'L': 'R', 'R': 'L'}[t[i]]
-                print(list(op[next_cube_str]) + t)
+                    t[i] = {'F': 'F_', 'F_': 'F',
+                            'U': 'U_', 'U_': 'U',
+                            'R': 'R_', 'R_': 'R'}[t[i]]
+                print(op[next_cube_str] + t)
                 print(len(path) + len(reverse_path) - 2)
                 found = True
                 break
